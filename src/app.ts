@@ -33,8 +33,8 @@ export default class App {
     
     
         // Camera & controls
-        this.camera.position.set(0,3,3);
-        // this.controls.target.set(1,2,0);
+        this.camera.position.set(0,2,3);
+        this.controls.target.set(0,1,0);
         this.controls.update();
 
         // renderer
@@ -143,6 +143,6 @@ export default class App {
     }
 
     removeAllLights() {
-        
+
     }
 }

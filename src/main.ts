@@ -1,11 +1,31 @@
 import App from './app'
+import { ControlPanel } from './components/controlPanel'
 import './style.css'
 // import typescriptLogo from './typescript.svg'
+let assetPath: string
 
-const assetPath = './src/assets/'
+console.log(import.meta.env)
+
+if (import.meta.env.MODE === 'development') {
+  assetPath = './src/assets/'
+} else {
+  assetPath = './assets/'
+}
 let scale = 0.3
 
-const app = new App(document.querySelector<HTMLDivElement>('#app'))
+const appNode = document.querySelector<HTMLDivElement>('#app')
+
+const app = new App(appNode)
+
+const actions = [
+  {name: 'First', action: () => {console.log('First')}}, 
+  {name: 'Second', action: () => {console.log('Second')}},
+  {name: 'Third', action: () => {console.log('Third')}}
+]
+const control = new ControlPanel(appNode, actions)
+control.init()
+
+
 app.init()
 app.geometryBox()
 app.geometryFloor()
