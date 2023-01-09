@@ -18,16 +18,16 @@ const appNode = document.querySelector<HTMLDivElement>('#app')
 const app = new App(appNode)
 
 const actions = [
-  {name: 'First', action: () => {console.log('First')}}, 
+  {name: 'First', action: () => {console.log('First', app.addLight())}}, 
   {name: 'Second', action: () => {console.log('Second')}},
-  {name: 'Third', action: () => {console.log('Third')}}
+  {name: 'X Delete all lights', action: () => {app.removeAllLights()}}
 ]
 const control = new ControlPanel(appNode, actions)
 control.init()
 
 
 app.init()
-app.geometryBox()
+// app.geometryBox()
 app.geometryFloor()
 app.addLight()
 
@@ -41,13 +41,13 @@ const setParams = async () => {
   const mesh = app.scene.getObjectByName( 'iolka' );
   if(mesh) {
     mesh.scale.set(scale, scale, scale)
+    mesh.position.set(1, 0, 0)
     app.updateArr.push(() => mesh.rotation.y = mesh.rotation.y + 0.02)
   }
 
   const venus = app.scene.getObjectByName( 'venus' );
   if(venus) {
     venus.scale.set(scale, scale, scale)
-    venus.position.set(1, 0, 0)
   }
 }
 

@@ -1,3 +1,4 @@
+import {arrow} from '../icons'
 import './style.css'
 
 interface actionInterface {
@@ -10,6 +11,7 @@ export class ControlPanel {
     actions: actionInterface[]
     template: string[]
     classNamesList: actionInterface[]
+    panelIsOpen: boolean
     
 
     constructor(domElement:any = document.body, actions:actionInterface[] = []) {
@@ -17,6 +19,7 @@ export class ControlPanel {
         this.actions = actions
         this.template = []
         this.classNamesList=[]
+        this.panelIsOpen = false
     }
 
     init () {
@@ -28,8 +31,12 @@ export class ControlPanel {
         }
 
         const node = document.createElement(`div`)
-        node.innerHTML = `<div class="controll-panel"><div class="controll-panel_button">R</div>${this.template.join('')}</div>`
+        console.log(arrow)
+        node.innerHTML = `<div class="controll-panel"><div class="open-button-wrapper"><div class="controll-panel_button open-button">${arrow()}</div>Light Scenario</div>${this.template.join('')}</div>`
         this.domElement.appendChild(node)
+
+        const btnOpen = document.querySelector(`.open-button`)
+        btnOpen?.addEventListener('click', this.togglePanelOpen)
 
         // Add listeneres to new buttons
         this.classNamesList.map(name => {
@@ -41,7 +48,7 @@ export class ControlPanel {
 
     addButtonToTemplate (action: actionInterface) {
         const randomClassName = 'a' + (Math.round(Date.now() * Math.random())).toString()
-        const btnTemplate = `<div class="controll-panel_button ${randomClassName}"></div>`
+        const btnTemplate = `<div class="open-button-wrapper"><div class="controll-panel_button ${randomClassName}">${action.name.slice(0,1)}</div>${action.name}</div>`
         this.template.push(btnTemplate)
         this.classNamesList.push({name: randomClassName.toString(), action: action.action})
     }
@@ -49,10 +56,23 @@ export class ControlPanel {
     setActive(className: string) {
         // Delete active class on all buttons
         const allBtns = document.querySelectorAll(`.controll-panel_button`)
-        allBtns.forEach(btn => console.log(btn.classList.remove('active')))
+        allBtns.forEach(btn => btn.classList.remove('active'))
         // Set active class on active button
         const btn = document.querySelector(`.${className}`)
         btn?.classList.add('active')
     }
-    
+
+    togglePanelOpen () {
+        this.panelIsOpen = !this.panelIsOpen
+        console.log(this.panelIsOpen)
+        const btn = document.querySelector(`.open-button`)
+        const panel = document.querySelector(`.controll-panel`)
+        if (this.panelIsOpen) {
+            btn?.classList.add('open')
+            panel?.classList.add('open')
+        } else {
+            btn?.classList.remove('open') 
+            panel?.classList.remove('open')
+        }
+    }  
 }

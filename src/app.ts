@@ -9,6 +9,7 @@ export default class App {
     controls: OrbitControls
     domElement: Document
     updateArr: (() => void)[]
+    lightsGroup: THREE.Group
 
     constructor (domElement:any = document.body) {
         this.domElement = domElement
@@ -17,9 +18,11 @@ export default class App {
         this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this.controls = new OrbitControls( this.camera, this.renderer.domElement );
         this.updateArr = [() => this.controls.update(), () => this.renderer.render(this.scene, this.camera)]
+        this.lightsGroup = new THREE.Group
     }
 
     init() {
+        this.scene.add(this.lightsGroup)
         this.scene.background = new THREE.Color(0x00aaff);
         this.scene.fog = new THREE.FogExp2(0x00aaff, 0.01);
         
@@ -29,7 +32,8 @@ export default class App {
         const light = new THREE.DirectionalLight(0xFFFFFF, 2);
         light.position.set( 0, 2, 10);
         light.rotation.y = 1;
-        this.scene.add(light);
+        this.lightsGroup.add(light);
+        // this.scene.add(light);
     
     
         // Camera & controls
@@ -124,7 +128,8 @@ export default class App {
         originLight.add( this.addLighting(colorList.colorRed, position) );
         originLight.add( this.addLighting(colorList.blue, position2) );
 
-        this.scene.add( originLight );
+        this.lightsGroup.add(originLight)
+        // this.scene.add( originLight );
 
         this.updateArr.push(() => originLight.rotation.y = originLight.rotation.y + 0.03)
     }
@@ -143,6 +148,11 @@ export default class App {
     }
 
     removeAllLights() {
-
+        console.log(this.scene.getObjectByName( 'light' ));
+        console.log(this.lightsGroup)
+        while (this.lightsGroup.children.length !== 0) {
+            this.lightsGroup.remove(this.lightsGroup.children[0])
+        }
+        console.log(this.scene)
     }
 }
