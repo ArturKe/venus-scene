@@ -31,7 +31,6 @@ export class ControlPanel {
         }
 
         const node = document.createElement(`div`)
-        console.log(arrow)
         node.innerHTML = `<div class="controll-panel"><div class="open-button-wrapper"><div class="controll-panel_button open-button">${arrow()}</div>Light Scenario</div>${this.template.join('')}</div>`
         this.domElement.appendChild(node)
 

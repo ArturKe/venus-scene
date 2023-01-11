@@ -2,6 +2,26 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
+interface IF_lightingConfig {
+    type?: string
+    color: number,
+    position: THREE.Vector3
+}
+
+interface IF_LightingScenario {
+    name: string,
+    lights: IF_lightingConfig,
+    action: ()=>void
+}
+
+// const lightScenarioArr: object[] = [
+//     {
+//         name: 'Scenario 1',
+//         lights: [{type: point, color: 2131231, position}],
+//         action: ()=> lights.totation.y = lights.totation.y + 0.02
+//     }
+// ]
+
 export default class App {
     scene: THREE.Scene
     renderer: THREE.WebGLRenderer
@@ -125,8 +145,8 @@ export default class App {
         const position = new THREE.Vector3(2, 3, 0)
         const position2 = new THREE.Vector3(-2, 3, 0)
 
-        originLight.add( this.addLighting(colorList.colorRed, position) );
-        originLight.add( this.addLighting(colorList.blue, position2) );
+        originLight.add( this.addLighting({type: 'spot', color: colorList.colorRed, position}) );
+        originLight.add( this.addLighting({color: colorList.blue, position: position2}) );
 
         this.lightsGroup.add(originLight)
         // this.scene.add( originLight );
@@ -134,13 +154,29 @@ export default class App {
         this.updateArr.push(() => originLight.rotation.y = originLight.rotation.y + 0.03)
     }
 
-    addLighting (color: number, position: THREE.Vector3) {
-        const light = new THREE.PointLight( color, 4, 10 );
-        light.position.copy(position);
+    addLighting (config: IF_lightingConfig) {
+        let light: THREE.Object3D
+        
+        //Default light
+        light = new THREE.PointLight( config.color, 4, 10 );
+        light.position.copy(config.position);
         light.name = 'light'
 
+        switch (config.type) {
+            case 'directional':
+                light = new THREE.DirectionalLight(0xFFFFFF, 2);
+                light.position.set( 0, 2, 10);
+                light.rotation.y = 1;
+                break
+            case 'spot':
+                light = new THREE.SpotLight( config.color, 4, 10, 0.3 );
+                light.position.copy(config.position);
+                light.name = 'light'
+                break
+        }
+
         const geometry = new THREE.SphereGeometry( 0.1, 12, 8 );
-        const material = new THREE.MeshStandardMaterial( { color: color, emissive: color } );
+        const material = new THREE.MeshStandardMaterial( { color: config.color, emissive: config.color } );
         const sphere = new THREE.Mesh( geometry, material );
         light.add(sphere)
 
