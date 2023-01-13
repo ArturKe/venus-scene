@@ -18,9 +18,9 @@ const appNode = document.querySelector<HTMLDivElement>('#app')
 const app = new App(appNode)
 
 const actions = [
-  {name: 'First', action: () => {console.log('First', app.addLight())}}, 
-  {name: 'Second', action: () => {console.log('Second')}},
-  {name: 'X Delete all lights', action: () => {app.removeAllLights()}}
+  {name: 'First', action: () => {console.log('First', app.addScenario(0))}}, 
+  {name: 'Second', action: () => {console.log('Second'), app.addScenario(1)}},
+  {name: 'Three', action: () => {app.addScenario(2)}}
 ]
 const control = new ControlPanel(appNode, actions)
 control.init()
@@ -29,7 +29,7 @@ control.init()
 app.init()
 // app.geometryBox()
 app.geometryFloor()
-app.addLight()
+// app.addLight()
 
 const loadModels = async () => {
   await app.loadModel('pine_tree_ver3.glb', assetPath, 'iolka')

@@ -5,22 +5,42 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 interface IF_lightingConfig {
     type?: string
     color: number,
-    position: THREE.Vector3
+    position: THREE.Vector3,
+    direction?: THREE.Vector3
 }
 
-interface IF_LightingScenario {
+interface lightingScenario {
     name: string,
-    lights: IF_lightingConfig,
-    action: ()=>void
+    lights: IF_lightingConfig[],
+    action: (object: THREE.Group)=>void
 }
 
-// const lightScenarioArr: object[] = [
-//     {
-//         name: 'Scenario 1',
-//         lights: [{type: point, color: 2131231, position}],
-//         action: ()=> lights.totation.y = lights.totation.y + 0.02
-//     }
-// ]
+const colorList = {
+    red: 0xfc0303,
+    colorDefault: 0xff0000,
+    orange: 0xfcce03,
+    blue: 0x0328fc,
+    white: 0xefefef
+}
+
+const scenarios: lightingScenario[] = [
+    {name: 'Scenario1', lights: [
+        {color: colorList.red, position: new THREE.Vector3(2, 3, 0)},
+        {color: colorList.blue, position: new THREE.Vector3(-2, 3, 0)},
+        {color: colorList.white, position: new THREE.Vector3(0, 1, 2)}
+    ], action: (object) => object.rotation.y = object.rotation.y + 0.03},
+
+    {name: 'Scenario2', lights: [
+        {type: 'point', color: colorList.red, position: new THREE.Vector3(2, 1, 0), direction: new THREE.Vector3(-1, 0, 0)},
+        {type: 'spot', color: colorList.orange, position: new THREE.Vector3(-4, 4, 0), direction: new THREE.Vector3(-3, 0, 0)}
+    ], action: (object) => object.rotation.y = object.rotation.y + 0.02 },
+
+    {name: 'Scenario3', lights: [
+        {type: 'directional', color: colorList.white, position: new THREE.Vector3(3, 5, 0)},
+        {color: colorList.colorDefault, position: new THREE.Vector3(0, 2, 2)},
+        {color: colorList.white, position: new THREE.Vector3(-0.5, 0.2, 0)}
+    ], action: (object) => object.rotation.y = object.rotation.y + 0.01 }
+]
 
 export default class App {
     scene: THREE.Scene
@@ -33,11 +53,12 @@ export default class App {
 
     constructor (domElement:any = document.body) {
         this.domElement = domElement
-        this.scene = new THREE.Scene();
-        this.renderer = new THREE.WebGLRenderer({antialias: true});
-        this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-        this.controls = new OrbitControls( this.camera, this.renderer.domElement );
-        this.updateArr = [() => this.controls.update(), () => this.renderer.render(this.scene, this.camera)]
+        this.scene = new THREE.Scene()
+        this.renderer = new THREE.WebGLRenderer({antialias: true})
+        this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
+        this.controls = new OrbitControls( this.camera, this.renderer.domElement )
+        // this.updateArr = [() => this.controls.update(), () => this.renderer.render(this.scene, this.camera)]
+        this.updateArr = []
         this.lightsGroup = new THREE.Group
     }
 
@@ -77,9 +98,9 @@ export default class App {
     }
 
     update (){
-        this.updateArr.map(func => func())
-        // this.controls.update();
-        // this.renderer.render(this.scene, this.camera);
+        this.updateArr.map((func = ()=>{}) => func())
+        this.controls.update();
+        this.renderer.render(this.scene, this.camera);
         // requestAnimationFrame(() => {this.update()});
     }
 
@@ -132,31 +153,18 @@ export default class App {
         return loader.loadAsync(url);
     }
 
-    addLight () {
-        const colorList = {
-            colorRed: 0xfc0303,
-            colorDefault: 0xff0000,
-            orange: 0xfcce03,
-            blue: 0x0328fc
-        }
-
-        const originLight = new THREE.Group
-
-        const position = new THREE.Vector3(2, 3, 0)
-        const position2 = new THREE.Vector3(-2, 3, 0)
-
-        originLight.add( this.addLighting({type: 'spot', color: colorList.colorRed, position}) );
-        originLight.add( this.addLighting({color: colorList.blue, position: position2}) );
-
+    addScenario (index: number) {
+        this.removeAllLights()
+        const originLight: THREE.Group = new THREE.Group
+        const scenario = scenarios[index]
+        scenario.lights.map(light => originLight.add(this.addLighting(light)))
         this.lightsGroup.add(originLight)
-        // this.scene.add( originLight );
-
-        this.updateArr.push(() => originLight.rotation.y = originLight.rotation.y + 0.03)
+        this.updateArr.push(() => scenario.action(originLight))
     }
 
     addLighting (config: IF_lightingConfig) {
         let light: THREE.Object3D
-        
+
         //Default light
         light = new THREE.PointLight( config.color, 4, 10 );
         light.position.copy(config.position);
@@ -164,9 +172,10 @@ export default class App {
 
         switch (config.type) {
             case 'directional':
-                light = new THREE.DirectionalLight(0xFFFFFF, 2);
-                light.position.set( 0, 2, 10);
-                light.rotation.y = 1;
+                light = new THREE.DirectionalLight(0xFFFFFF, 0.2);
+                // light.position.set( 0, 2, 10);
+                light.position.copy(config.position);
+                light.rotation.y = 1.5;
                 break
             case 'spot':
                 light = new THREE.SpotLight( config.color, 4, 10, 0.3 );
