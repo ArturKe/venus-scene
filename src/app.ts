@@ -50,6 +50,7 @@ export default class App {
     domElement: Document
     updateArr: (() => void)[]
     lightsGroup: THREE.Group
+    public playStatus: boolean
 
     constructor (domElement:any = document.body) {
         this.domElement = domElement
@@ -60,6 +61,7 @@ export default class App {
         // this.updateArr = [() => this.controls.update(), () => this.renderer.render(this.scene, this.camera)]
         this.updateArr = []
         this.lightsGroup = new THREE.Group
+        this.playStatus = true
     }
 
     init() {
@@ -98,7 +100,7 @@ export default class App {
     }
 
     update (){
-        this.updateArr.map((func = ()=>{}) => func())
+        if (this.playStatus) this.updateArr.map((func = ()=>{}) => func())
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
         // requestAnimationFrame(() => {this.update()});

@@ -1,7 +1,7 @@
 .controll-panel{
     position: fixed;
     top: 30%;
-    right: -160px;
+    right: -155px;
     background: rgb(243 127 127 / 63%);
     min-height: 200px;
     min-width: 200px;
@@ -16,7 +16,7 @@
   .controll-panel_button {
     width: 45px;
     height: 45px;
-    background: blue;
+    background: #646491;
     border-radius: 100%;
     cursor: pointer;
     box-sizing: border-box;
@@ -34,6 +34,9 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    background: #f0ffff5d;
+    border-radius: 35px;
+    padding: 5px;
   }
 
   .open-button{

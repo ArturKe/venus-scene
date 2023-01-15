@@ -1,6 +1,6 @@
 import App from './app'
-import { ControlPanel } from './components/controlPanel'
 import './style.css'
+import { ControlPanel } from './components/controlPanel/ControlPanel'
 // import typescriptLogo from './typescript.svg'
 let assetPath: string
 
@@ -20,7 +20,8 @@ const app = new App(appNode)
 const actions = [
   {name: 'First', action: () => {console.log('First', app.addScenario(0))}}, 
   {name: 'Second', action: () => {console.log('Second'), app.addScenario(1)}},
-  {name: 'Three', action: () => {app.addScenario(2)}}
+  {name: 'Three', action: () => {app.addScenario(2)}},
+  {name: 'Play/Stop', icon: 'Play', action: () => {app.playStatus = !app.playStatus}}
 ]
 const control = new ControlPanel(appNode, actions)
 control.init()

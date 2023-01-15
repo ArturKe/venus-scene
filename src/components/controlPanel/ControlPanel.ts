@@ -1,9 +1,11 @@
 import {arrow} from '../icons'
-import './style.css'
+import './ControlPanel.css'
 
 interface actionInterface {
     name: string,
-    action: ()=>void
+    action: ()=>void,
+    icon?: string,
+    status?: boolean
 }
 
 export class ControlPanel {
@@ -47,7 +49,7 @@ export class ControlPanel {
 
     addButtonToTemplate (action: actionInterface) {
         const randomClassName = 'a' + (Math.round(Date.now() * Math.random())).toString()
-        const btnTemplate = `<div class="open-button-wrapper"><div class="controll-panel_button ${randomClassName}">${action.name.slice(0,1)}</div>${action.name}</div>`
+        const btnTemplate = `<div class="open-button-wrapper"><div class="controll-panel_button ${randomClassName}">${action.icon ? action.icon : action.name.slice(0,1)}</div>${action.name}</div>`
         this.template.push(btnTemplate)
         this.classNamesList.push({name: randomClassName.toString(), action: action.action})
     }
