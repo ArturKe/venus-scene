@@ -12,7 +12,14 @@ interface IF_lightingConfig {
 interface lightingScenario {
     name: string,
     lights: IF_lightingConfig[],
+    backgroundColor?: string | number,
+    cameraSettings?: cameraSettings, 
     action: (object: THREE.Group)=>void
+}
+
+interface cameraSettings {
+    position?: number[],
+    direction?: number[]
 }
 
 const colorList = {
@@ -20,26 +27,54 @@ const colorList = {
     colorDefault: 0xff0000,
     orange: 0xfcce03,
     blue: 0x0328fc,
-    white: 0xefefef
+    white: 0xefefef,
+    bgOrange: 0x302f2c,
+    bgDarkGrey: 0xffc880
 }
+// '#302f2c'
+
 
 const scenarios: lightingScenario[] = [
-    {name: 'Scenario1', lights: [
-        {color: colorList.red, position: new THREE.Vector3(2, 3, 0)},
-        {color: colorList.blue, position: new THREE.Vector3(-2, 3, 0)},
-        {color: colorList.white, position: new THREE.Vector3(0, 1, 2)}
-    ], action: (object) => object.rotation.y = object.rotation.y + 0.03},
+    {
+        name: 'Scenario1', 
+        lights: [
+            {color: colorList.red, position: new THREE.Vector3(2, 3, 0)},
+            {color: colorList.blue, position: new THREE.Vector3(-2, 3, 0)},
+            {color: colorList.white, position: new THREE.Vector3(0, 1, 2)}
+        ],
+        backgroundColor: '#ffc880',
+        cameraSettings: {
+            position: [0,2,1]
+        },
+        action: (object) => object.rotation.y = object.rotation.y + 0.03
+    },
 
-    {name: 'Scenario2', lights: [
-        {type: 'point', color: colorList.red, position: new THREE.Vector3(2, 1, 0), direction: new THREE.Vector3(-1, 0, 0)},
-        {type: 'spot', color: colorList.orange, position: new THREE.Vector3(-4, 4, 0), direction: new THREE.Vector3(-3, 0, 0)}
-    ], action: (object) => object.rotation.y = object.rotation.y + 0.02 },
+    {
+        name: 'Scenario2', 
+        lights: [
+            {type: 'point', color: colorList.red, position: new THREE.Vector3(2, 1, 0), direction: new THREE.Vector3(-1, 0, 0)},
+            {type: 'spot', color: colorList.orange, position: new THREE.Vector3(-4, 4, 0), direction: new THREE.Vector3(-3, 0, 0)}
+        ],
+        backgroundColor: colorList.bgOrange,
+        cameraSettings: {
+            position: [0,2,5]
+        },
+        action: (object) => object.rotation.y = object.rotation.y + 0.02
+    },
 
-    {name: 'Scenario3', lights: [
-        {type: 'directional', color: colorList.white, position: new THREE.Vector3(3, 5, 0)},
-        {color: colorList.colorDefault, position: new THREE.Vector3(0, 2, 2)},
-        {color: colorList.white, position: new THREE.Vector3(-0.5, 0.2, 0)}
-    ], action: (object) => object.rotation.y = object.rotation.y + 0.01 }
+    {
+        name: 'Scenario3', 
+        lights: [
+            {type: 'directional', color: colorList.white, position: new THREE.Vector3(3, 4, 0)},
+            {color: colorList.colorDefault, position: new THREE.Vector3(0, 2, 2)},
+            {color: colorList.blue, position: new THREE.Vector3(-1.5, 0.7, 0)}
+        ],
+        cameraSettings: {
+            position: [0,1,2]
+        },
+        backgroundColor: colorList.bgDarkGrey,
+        action: (object) => object.rotation.y = object.rotation.y + 0.01
+    }
 ]
 
 export default class App {
@@ -66,9 +101,9 @@ export default class App {
 
     init() {
         this.scene.add(this.lightsGroup)
-        this.scene.background = new THREE.Color(0x00aaff);
-        this.scene.fog = new THREE.FogExp2(0x00aaff, 0.01);
-        
+
+        this.setBackgroundColor('#00aaff')
+             
         const ambient = new THREE.HemisphereLight(0xffffbb, 0x080820, 0.5);
         this.scene.add(ambient);
       
@@ -80,12 +115,15 @@ export default class App {
     
     
         // Camera & controls
-        this.camera.position.set(0,2,3);
-        this.controls.target.set(0,1,0);
+        this.setCameraSettings()
         this.controls.update();
 
         // renderer
-        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.renderer.outputEncoding = THREE.sRGBEncoding
+        this.renderer.shadowMap.enabled = true
+        this.renderer.shadowMap.type = THREE.BasicShadowMap
+        // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        
         this.renderer.setSize( window.innerWidth, window.innerHeight );
         this.renderer.setAnimationLoop(() => this.update());
         this.domElement.appendChild( this.renderer.domElement );
@@ -114,6 +152,13 @@ export default class App {
                 .then(obj => {
                     console.log(obj)
                     if (name) {
+                        if ((obj.scene.children || []).length > 0) {
+                            obj.scene.children.map(item => {
+                                item.castShadow = true
+                                // item.receiveShadow = true
+                            })
+                        }
+                        console.log(obj.scene)
                         obj.scene.name = name
                     }
                     this.scene.add(obj.scene)
@@ -155,11 +200,37 @@ export default class App {
         return loader.loadAsync(url);
     }
 
+    setBackgroundColor (bgColor: string | number) {
+        this.scene.background = new THREE.Color(bgColor);
+        this.scene.fog = new THREE.FogExp2(bgColor, 0.01);
+    }
+
+    setCameraSettings (position = [0,2,3], direction = [0,1,0]) {
+        const pos = new THREE.Vector3(...position)
+        const orig = new THREE.Vector3(...direction)
+        this.camera.position.copy(pos)
+        this.controls.target.copy(orig)
+    }
+
+    // setCameraSettings (props:cameraSettings = {position: [0,2,3], direction: [0,1,0]}) {
+    //     const pos = new THREE.Vector3(...props.position)
+    //     const orig = new THREE.Vector3(...props.direction)
+    //     this.camera.position.copy(pos)
+    //     this.controls.target.copy(orig)
+    // }
+
     addScenario (index: number) {
         this.removeAllLights()
         const originLight: THREE.Group = new THREE.Group
         const scenario = scenarios[index]
         scenario.lights.map(light => originLight.add(this.addLighting(light)))
+        if (scenario.backgroundColor) this.setBackgroundColor(scenario.backgroundColor)
+        if (scenario.cameraSettings) {
+            if (scenario.cameraSettings.position) {
+                // const position: number[] = scenario.cameraSettings.position
+                this.setCameraSettings(scenario.cameraSettings.position)
+            }
+        }
         this.lightsGroup.add(originLight)
         this.updateArr.push(() => scenario.action(originLight))
     }
@@ -171,6 +242,7 @@ export default class App {
         light = new THREE.PointLight( config.color, 4, 10 );
         light.position.copy(config.position);
         light.name = 'light'
+        light.castShadow = true
 
         switch (config.type) {
             case 'directional':
@@ -178,11 +250,14 @@ export default class App {
                 // light.position.set( 0, 2, 10);
                 light.position.copy(config.position);
                 light.rotation.y = 1.5;
+                light.castShadow = true
+                // light.shadowMapWidth = 2048
                 break
             case 'spot':
                 light = new THREE.SpotLight( config.color, 4, 10, 0.3 );
                 light.position.copy(config.position);
                 light.name = 'light'
+                light.castShadow = true
                 break
         }
 

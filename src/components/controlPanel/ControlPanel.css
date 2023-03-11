@@ -23,11 +23,11 @@
     color: white;
     display: grid;
     place-content: center;
-    transition: all 0.3s;
+    transition: all 0.2s;
   }
 
   .active {
-    border: 3px solid rgb(255, 255, 255);
+    border: 4px solid rgb(255, 255, 255);
   }
 
   .open-button-wrapper{
@@ -37,6 +37,7 @@
     background: #f0ffff5d;
     border-radius: 35px;
     padding: 5px;
+    cursor: pointer;
   }
 
   .open-button{

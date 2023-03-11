@@ -5,6 +5,16 @@ import { ControlPanel } from './components/controlPanel/ControlPanel'
 let assetPath: string
 
 console.log(import.meta.env)
+interface actionsInterface {
+  name: string,
+  currentActionNumber: number,
+  actions: actionInterface[]
+}
+interface actionInterface {
+  actionName: string,
+  iconName: string,
+  action: (object: THREE.Group)=>void
+}
 
 if (import.meta.env.MODE === 'development') {
   assetPath = './src/assets/'
@@ -17,13 +27,73 @@ const appNode = document.querySelector<HTMLDivElement>('#app')
 
 const app = new App(appNode)
 
-const actions = [
-  {name: 'First', action: () => {console.log('First', app.addScenario(0))}}, 
-  {name: 'Second', action: () => {console.log('Second'), app.addScenario(1)}},
-  {name: 'Three', action: () => {app.addScenario(2)}},
-  {name: 'Play/Stop', icon: 'Play', action: () => {app.playStatus = !app.playStatus}}
+// const actions = [
+//   {name: 'First', action: () => {console.log('First', app.addScenario(0))}}, 
+//   {name: 'Second', action: () => {console.log('Second'), app.addScenario(1)}},
+//   {name: 'Three', action: () => {app.addScenario(2)}},
+//   {name: 'Play/Stop', icon: 'Play', action: () => {app.playStatus = !app.playStatus}}
+// ]
+const actionsNew: actionsInterface[] = [
+  {
+    name: 'First', 
+    currentActionNumber: 0,
+    actions:[
+      {
+          actionName: 'First Light',
+          action: () => app.addScenario(1),
+          iconName: 'arrowcircle'
+      },
+      {
+          actionName: 'Second Light',
+          action: () => app.addScenario(2),
+          iconName: '2'
+      },
+    ]
+  }, 
+
+  {
+    name: 'Second', 
+    currentActionNumber: 0,
+    actions: [
+      {
+          actionName: 'First',
+          action: () => {console.log('Second'), app.addScenario(1)},
+          iconName: ''
+      }
+    ]
+  },
+
+  {
+    name: 'Three',
+    currentActionNumber: 0,
+    actions: [
+      {
+          actionName: 'Second',
+          action: () => {app.addScenario(2)},
+          iconName: 'arrow'
+      }
+    ]
+  },
+
+  {
+    name: 'Play', 
+    currentActionNumber: 0,
+    actions:[
+      {
+          actionName: 'Play',
+          action: () => app.playStatus = true,
+          iconName: 'stop'
+      },
+      {
+          actionName: 'Stop',
+          action: () => app.playStatus = false,
+          iconName: 'play'
+      },
+    ]
+  }
 ]
-const control = new ControlPanel(appNode, actions)
+// const control = new ControlPanel(appNode, actions)
+const control = new ControlPanel(appNode, actionsNew)
 control.init()
 
 
