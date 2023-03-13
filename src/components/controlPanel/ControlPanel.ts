@@ -1,36 +1,11 @@
 import { icons } from '../icons'
 import './ControlPanel.css'
 
-// interface actionInterface {
-//     name: string,
-//     action: ()=>void,
-//     icon?: string,
-//     status?: boolean
-// }
-// interface actionsInterface {
-//     name: string,
-//     currentActionNumber: number,
-//     actions: actionInterface[]
-//   }
-interface actionsInterface {
-    name: string,
-    currentActionNumber: number,
-    actions: [],
-    icon?: string,
-    status?: boolean
-}
-interface classNamesLis {
-    name: string,
-    action: {
-        name: string
-    }
-}
-
 export class ControlPanel {
     domElement: Document
     actions: actionsInterface[]
     template: string[]
-    classNamesList: classNamesLis[]
+    classNamesList: classNamesList[]
     panelIsOpen: boolean
     
 
@@ -46,7 +21,7 @@ export class ControlPanel {
         // Make buttons from actions
         if (this.actions.length > 1) {
             this.actions.map((action) => {
-                this.addButtonToTemplate (action)
+                this.addButtonToTemplate(action)
             })
         }
 
@@ -78,7 +53,7 @@ export class ControlPanel {
     }
 
     // Switch an actions and internal icon and text
-    handler (action, className) {
+    handler (action:actionsInterface, className: classNamesList) {
         // console.log(action.actions)
         action.currentActionNumber = action.currentActionNumber < action.actions.length-1 ? action.currentActionNumber + 1 : 0
         action.actions[action.currentActionNumber].action()
@@ -98,7 +73,7 @@ export class ControlPanel {
     }
 
 
-    addButtonToTemplate (action: actionInterface) {
+    addButtonToTemplate (action: actionsInterface) {
         // debugger
         const randomClassName = 'a' + (Math.round(Date.now() * Math.random())).toString()
         const iName = action.actions[action.currentActionNumber].iconName
@@ -106,7 +81,7 @@ export class ControlPanel {
         const btnTemplate = `
             <div class="open-button-wrapper ${randomClassName + action.name}">
                 <div class="controll-panel_button ${randomClassName}">${icons[iName] ? icons[iName]() : icons.circle()}</div>
-                <div class="text${randomClassName}">${actionName}</div>
+                <div class="text text${randomClassName}">${actionName}</div>
             </div>`
         this.template.push(btnTemplate)
         this.classNamesList.push({name: randomClassName.toString(), action})

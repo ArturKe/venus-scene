@@ -29,7 +29,8 @@ const colorList = {
     blue: 0x0328fc,
     white: 0xefefef,
     bgOrange: 0x302f2c,
-    bgDarkGrey: 0xffc880
+    bgDarkGrey: 0xffc880,
+    bgDefaultBlue: 0x00aaff
 }
 // '#302f2c'
 
@@ -44,7 +45,7 @@ const scenarios: lightingScenario[] = [
         ],
         backgroundColor: '#ffc880',
         cameraSettings: {
-            position: [0,2,1]
+            position: [1, 2.3, 1.5]
         },
         action: (object) => object.rotation.y = object.rotation.y + 0.03
     },
@@ -73,6 +74,19 @@ const scenarios: lightingScenario[] = [
             position: [0,1,2]
         },
         backgroundColor: colorList.bgDarkGrey,
+        action: (object) => object.rotation.y = object.rotation.y + 0.01
+    },
+
+    {
+        name: 'Scenario4', 
+        lights: [
+            {type: 'directional', color: colorList.white, position: new THREE.Vector3(3, 4, 0)},
+            {type: 'ambient', color: colorList.white, position: new THREE.Vector3(1, 1, 0)}
+        ],
+        cameraSettings: {
+            position: [0,1,4]
+        },
+        backgroundColor: colorList.bgDefaultBlue,
         action: (object) => object.rotation.y = object.rotation.y + 0.01
     }
 ]
@@ -222,7 +236,7 @@ export default class App {
     addScenario (index: number) {
         this.removeAllLights()
         const originLight: THREE.Group = new THREE.Group
-        const scenario = scenarios[index]
+        const scenario = scenarios[index] ? scenarios[index] : scenarios[0]
         scenario.lights.map(light => originLight.add(this.addLighting(light)))
         if (scenario.backgroundColor) this.setBackgroundColor(scenario.backgroundColor)
         if (scenario.cameraSettings) {
@@ -258,6 +272,12 @@ export default class App {
                 light.position.copy(config.position);
                 light.name = 'light'
                 light.castShadow = true
+                break
+            case 'ambient':
+                light = new THREE.HemisphereLight(config.color, 0x080820, 0.5);
+                light.position.copy(config.position);
+                light.name = 'light'
+                // light.castShadow = true
                 break
         }
 

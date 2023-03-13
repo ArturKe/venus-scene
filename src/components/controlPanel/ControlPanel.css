@@ -40,6 +40,14 @@
     cursor: pointer;
   }
 
+  .open-button-wrapper:hover{
+    background: #f5fdfda8;
+  }
+
+  .open-button-wrapper .text{
+    user-select: none;
+  }
+
   .open-button{
     background: #494f49;
   }

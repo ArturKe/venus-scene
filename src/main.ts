@@ -5,16 +5,6 @@ import { ControlPanel } from './components/controlPanel/ControlPanel'
 let assetPath: string
 
 console.log(import.meta.env)
-interface actionsInterface {
-  name: string,
-  currentActionNumber: number,
-  actions: actionInterface[]
-}
-interface actionInterface {
-  actionName: string,
-  iconName: string,
-  action: (object: THREE.Group)=>void
-}
 
 if (import.meta.env.MODE === 'development') {
   assetPath = './src/assets/'
@@ -41,12 +31,12 @@ const actionsNew: actionsInterface[] = [
       {
           actionName: 'First Light',
           action: () => app.addScenario(1),
-          iconName: 'arrowcircle'
+          iconName: ''
       },
       {
           actionName: 'Second Light',
           action: () => app.addScenario(2),
-          iconName: '2'
+          iconName: 'arrowcircle'
       },
     ]
   }, 
@@ -70,7 +60,19 @@ const actionsNew: actionsInterface[] = [
       {
           actionName: 'Second',
           action: () => {app.addScenario(2)},
-          iconName: 'arrow'
+          iconName: 'arrowcircle'
+      }
+    ]
+  },
+
+  {
+    name: 'Four',
+    currentActionNumber: 0,
+    actions: [
+      {
+          actionName: 'Default Light',
+          action: () => {app.addScenario(0)},
+          iconName: 'sun'
       }
     ]
   },
