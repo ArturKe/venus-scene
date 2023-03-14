@@ -6,12 +6,17 @@ interface actionsInterface {
 interface actionInterface {
   actionName: string,
   iconName: string,
-  action: (object: THREE.Group)=>void
+  action: ()=>void
 }
 
-interface classNamesList {
+// interface classNamesListItem {
+//   name: string,
+//   action: {
+//       name: string
+//   }
+// }
+
+interface classNamesListItem {
   name: string,
-  action: {
-      name: string
-  }
+  action: actionsInterface
 }

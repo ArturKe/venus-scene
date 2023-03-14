@@ -5,7 +5,7 @@ export class ControlPanel {
     domElement: Document
     actions: actionsInterface[]
     template: string[]
-    classNamesList: classNamesList[]
+    classNamesList: classNamesListItem[]
     panelIsOpen: boolean
     
 
@@ -45,22 +45,19 @@ export class ControlPanel {
         // })
 
         this.classNamesList.map(className => {
-            const btnClsName = className.name + className.action.name
-            // const btn = document.querySelector(`.${className.name}`)
+            const btnClsName = 'btn' + className.name
             const btn = document.querySelector(`.${btnClsName}`)
             btn?.addEventListener('click',() => {this.handler(className.action, className.name), this.setActive(className.name)}) // Handler
         })
     }
 
     // Switch an actions and internal icon and text
-    handler (action:actionsInterface, className: classNamesList) {
-        // console.log(action.actions)
+    handler (action:actionsInterface, className: string) {
+        // Switch actions in order by increasing current number
         action.currentActionNumber = action.currentActionNumber < action.actions.length-1 ? action.currentActionNumber + 1 : 0
         action.actions[action.currentActionNumber].action()
 
-        // const btnClsName = className + action.name
         const btnClsName = 'text' + className
-        // console.log(btnClsName)
 
         // Find a text and change to action name
         const btnText = document.querySelector(`.${btnClsName}`)
@@ -79,7 +76,7 @@ export class ControlPanel {
         const iName = action.actions[action.currentActionNumber].iconName
         const actionName = action.actions[action.currentActionNumber].actionName
         const btnTemplate = `
-            <div class="open-button-wrapper ${randomClassName + action.name}">
+            <div class="open-button-wrapper ${'btn' + randomClassName}">
                 <div class="controll-panel_button ${randomClassName}">${icons[iName] ? icons[iName]() : icons.circle()}</div>
                 <div class="text text${randomClassName}">${actionName}</div>
             </div>`
@@ -88,12 +85,18 @@ export class ControlPanel {
     }
 
     setActive(className: string) {
+        this.classNameHandler(`.controll-panel_button`,className,'active')
+        this.classNameHandler(`.open-button-wrapper`,'btn'+className,'active')
+    }
+
+    // Set and remove className on certain nodes
+    classNameHandler (wantedClassName: string, targetClassName: string, setClassName: string) {
         // Delete active class on all buttons
-        const allBtns = document.querySelectorAll(`.controll-panel_button`)
-        allBtns.forEach(btn => btn.classList.remove('active'))
+        const allNodes = document.querySelectorAll(wantedClassName)
+        allNodes.forEach(btn => btn.classList.remove(setClassName))
         // Set active class on active button
-        const btn = document.querySelector(`.${className}`)
-        btn?.classList.add('active')
+        const btn = document.querySelector(`.${targetClassName}`)
+        btn?.classList.add(setClassName)
     }
 
     togglePanelOpen () {
