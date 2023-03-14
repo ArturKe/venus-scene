@@ -1,6 +1,10 @@
 # Venus Scene
-3D viewer by Three JS
+3D viewer created by using ThreeJS library.
 
-Orbit Control, lightings
+"Venus De Milo" sculpture 3D scan.
 
-- Demo: <a href="https://arturke.github.io/Home_Projects/venus-new/index.html">3D Venus</a>
+ - Orbit Control
+ - Diffrent type light scenarios
+ - Few diffrent camera scenes
+
+Demo: <a href="https://transcendent-venus-demo.netlify.app/">3D Venus</a>
