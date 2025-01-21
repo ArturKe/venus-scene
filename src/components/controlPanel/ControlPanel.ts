@@ -106,9 +106,11 @@ export class ControlPanel {
         const panel = document.querySelector(`.controll-panel`)
         if (this.panelIsOpen) {
             btn?.classList.add('open')
+            btn?.title='Open menu'
             panel?.classList.add('open')
         } else {
-            btn?.classList.remove('open') 
+            btn?.classList.remove('open')
+            btn?.title='Close menu'
             panel?.classList.remove('open')
         }
     }  
