@@ -102,7 +102,7 @@ export class ControlPanel {
     togglePanelOpen () {
         this.panelIsOpen = !this.panelIsOpen
         console.log(this.panelIsOpen)
-        const btn = document.querySelector<HTMLElement>(`.open-button`)
+        const btn:any = document.querySelector(`.open-button`)
         const panel = document.querySelector(`.controll-panel`)
         if (this.panelIsOpen) {
             btn?.classList.add('open')
